@@ -1,16 +1,11 @@
-import React, { Fragment } from 'react';
-import { SafeAreaView } from 'react-native';
+import React from 'react';
 
 import './config/ReactotronConfig';
 
-import Test from '~/Teste';
+import Routes from './routes';
 
 const App = () => {
-  return (
-    <SafeAreaView>
-      <Test />
-    </SafeAreaView>
-  );
+  return <Routes />;
 };
 
 export default App;
