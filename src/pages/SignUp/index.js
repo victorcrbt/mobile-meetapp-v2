@@ -8,19 +8,20 @@ import { Container, Logo, Link, LinkText } from './styles';
 
 import logo from '~/assets/logo.png';
 
-export default function SignIn({ navigation }) {
+export default function SignUp({ navigation }) {
   return (
     <Background>
       <Container>
         <Logo source={logo} />
 
+        <Input icon="person" placeholder="Digite seu nome" />
         <Input icon="email" placeholder="Digite seu e-mail" />
         <Input icon="lock" placeholder="Digite sua senha" />
 
         <Button>Entrar</Button>
 
-        <Link onPress={() => navigation.navigate('SignUp')}>
-          <LinkText>Criar conta grátis</LinkText>
+        <Link onPress={() => navigation.navigate('SignIn')}>
+          <LinkText>Já tenho conta</LinkText>
         </Link>
       </Container>
     </Background>
