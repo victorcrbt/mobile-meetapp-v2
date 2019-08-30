@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
 import { SafeAreaView } from 'react-native';
 
+import './config/ReactotronConfig';
+
 import Test from '~/Teste';
 
 const App = () => {
