@@ -3,9 +3,9 @@ import { View } from 'react-native';
 
 import { Container, Text } from './styles';
 
-export default function Button({ children }) {
+export default function Button({ children, onPress }) {
   return (
-    <Container>
+    <Container onPress={onPress}>
       <Text>{children}</Text>
     </Container>
   );
