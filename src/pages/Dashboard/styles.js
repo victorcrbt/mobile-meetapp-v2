@@ -4,6 +4,25 @@ export const Container = styled.View`
   flex: 1;
 `;
 
+export const DatePicker = styled.View`
+  height: 50px;
+  padding: 0 20px;
+
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const PrevDate = styled.TouchableOpacity``;
+
+export const CurrentDate = styled.Text`
+  color: #fff;
+  font-weight: bold;
+  font-size: 18px;
+`;
+
+export const NextDate = styled.TouchableOpacity``;
+
 export const Meetups = styled.FlatList`
   margin-top: 20px;
   padding: 0 20px;

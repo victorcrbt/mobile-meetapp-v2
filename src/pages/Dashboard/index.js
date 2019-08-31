@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, addDays, subDays } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -12,6 +12,10 @@ import Button from '~/components/Button';
 import {
   Container,
   Meetups,
+  DatePicker,
+  PrevDate,
+  CurrentDate,
+  NextDate,
   Meetup,
   Banner,
   Info,
@@ -25,11 +29,16 @@ import {
 
 export default function Dashboard() {
   const [meetups, setMeetups] = useState([]);
+  const [date, setDate] = useState(new Date());
 
   useEffect(() => {
     async function loadMeetups() {
       try {
-        const response = await api.get('/meetups');
+        const response = await api.get('/meetups', {
+          params: {
+            date,
+          },
+        });
 
         console.tron.log(response.data);
 
@@ -40,11 +49,25 @@ export default function Dashboard() {
     }
 
     loadMeetups();
-  }, []);
+  }, [date]);
 
   return (
     <Background>
       <Header />
+
+      <DatePicker>
+        <PrevDate onPress={() => setDate(subDays(date, 1))}>
+          <Icon name="chevron-left" size={25} color="#fff" />
+        </PrevDate>
+
+        <CurrentDate>
+          {format(date, "dd 'de' MMMM 'de' yyyy", { locale: pt })}
+        </CurrentDate>
+
+        <NextDate onPress={() => setDate(addDays(date, 1))}>
+          <Icon name="chevron-right" size={25} color="#fff" />
+        </NextDate>
+      </DatePicker>
 
       <Container>
         <Meetups
