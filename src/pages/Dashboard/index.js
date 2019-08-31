@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { format, parseISO, addDays, subDays } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -30,6 +31,7 @@ import {
 export default function Dashboard() {
   const [meetups, setMeetups] = useState([]);
   const [date, setDate] = useState(new Date());
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     async function loadMeetups() {
@@ -37,26 +39,70 @@ export default function Dashboard() {
         const response = await api.get('/meetups', {
           params: {
             date,
+            page,
           },
         });
 
-        console.tron.log(response.data);
+        const { data: subscriptions } = await api.get('/subscriptions');
 
-        setMeetups(response.data);
+        const meetupList = response.data.map(meetup => ({
+          ...meetup,
+          subscribed: subscriptions.some(
+            subscription => subscription.meetup_id === meetup.id
+          ),
+        }));
+
+        console.tron.log(meetupList);
+
+        setMeetups([...meetups, ...meetupList]);
       } catch (err) {
-        console.tron.log(err);
+        Alert.alert('Erro', 'Falha ao carregar os dados.');
       }
     }
 
     loadMeetups();
-  }, [date]);
+  }, [date, page]); // eslint-disable-line
+
+  function prevDate() {
+    setDate(subDays(date, 1));
+    setMeetups([]);
+    setPage(1);
+  }
+
+  function nextDate() {
+    setDate(addDays(date, 1));
+    setMeetups([]);
+    setPage(1);
+  }
+
+  function handlePageChange() {
+    setPage(page + 1);
+  }
+
+  async function handleSubscription(id) {
+    try {
+      await api.post(`/meetups/${id}/subscribe`);
+
+      const meetupIndex = meetups.findIndex(meetup => meetup.id === id);
+
+      const meetupsCopy = meetups;
+
+      meetupsCopy[meetupIndex].subscribed = true;
+
+      setMeetups([...meetupsCopy]);
+
+      Alert.alert('Sucesso!', 'Você se inscreveu na meetup com sucesso!');
+    } catch (err) {
+      Alert.alert('Erro', err.response.data.error);
+    }
+  }
 
   return (
     <Background>
       <Header />
 
       <DatePicker>
-        <PrevDate onPress={() => setDate(subDays(date, 1))}>
+        <PrevDate onPress={prevDate}>
           <Icon name="chevron-left" size={25} color="#fff" />
         </PrevDate>
 
@@ -64,7 +110,7 @@ export default function Dashboard() {
           {format(date, "dd 'de' MMMM 'de' yyyy", { locale: pt })}
         </CurrentDate>
 
-        <NextDate onPress={() => setDate(addDays(date, 1))}>
+        <NextDate onPress={nextDate}>
           <Icon name="chevron-right" size={25} color="#fff" />
         </NextDate>
       </DatePicker>
@@ -72,6 +118,7 @@ export default function Dashboard() {
       <Container>
         <Meetups
           data={meetups}
+          onEndReached={handlePageChange}
           keyExtractor={item => String(item.id)}
           renderItem={({ item: meetup }) => (
             <Meetup>
@@ -101,9 +148,13 @@ export default function Dashboard() {
                 </InfoText>
               </Info>
 
-              <SubscribeButton>
-                <Button>Realizar inscrição</Button>
-              </SubscribeButton>
+              {!meetup.subscribed && (
+                <SubscribeButton>
+                  <Button onPress={() => handleSubscription(meetup.id)}>
+                    Realizar inscrição
+                  </Button>
+                </SubscribeButton>
+              )}
             </Meetup>
           )}
         />
