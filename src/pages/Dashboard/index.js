@@ -1,18 +1,90 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { format, parseISO } from 'date-fns';
+import pt from 'date-fns/locale/pt';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Text } from 'react-native';
+
+import api from '~/services/api';
 
 import Background from '~/components/Background';
 import Header from '~/components/Header';
+import Button from '~/components/Button';
 
-// import { Container } from './styles';
+import {
+  Container,
+  Meetups,
+  Meetup,
+  Banner,
+  Info,
+  InfoText,
+  Title,
+  MeetupDate,
+  Location,
+  Organizer,
+  SubscribeButton,
+} from './styles';
 
 export default function Dashboard() {
+  const [meetups, setMeetups] = useState([]);
+
+  useEffect(() => {
+    async function loadMeetups() {
+      try {
+        const response = await api.get('/meetups');
+
+        console.tron.log(response.data);
+
+        setMeetups(response.data);
+      } catch (err) {
+        console.tron.log(err);
+      }
+    }
+
+    loadMeetups();
+  }, []);
+
   return (
     <Background>
       <Header />
 
-      <Text>Dashboard</Text>
+      <Container>
+        <Meetups
+          data={meetups}
+          keyExtractor={item => String(item.id)}
+          renderItem={({ item: meetup }) => (
+            <Meetup>
+              <Banner source={{ uri: meetup.banner.url }} />
+
+              <Info>
+                <Title>{meetup.title}</Title>
+                <InfoText>
+                  <Icon name="date-range" size={14} color="#666" />
+                  <MeetupDate>
+                    {format(
+                      parseISO(meetup.date),
+                      "dd 'de' MMMM 'de' yyyy', às' HH'h'mm",
+                      {
+                        locale: pt,
+                      }
+                    )}
+                  </MeetupDate>
+                </InfoText>
+                <InfoText>
+                  <Icon name="pin-drop" size={14} color="#666" />
+                  <Location>{meetup.location}</Location>
+                </InfoText>
+                <InfoText>
+                  <Icon name="person" size={14} color="#666" />
+                  <Organizer>Organizador: {meetup.user.name}</Organizer>
+                </InfoText>
+              </Info>
+
+              <SubscribeButton>
+                <Button>Realizar inscrição</Button>
+              </SubscribeButton>
+            </Meetup>
+          )}
+        />
+      </Container>
     </Background>
   );
 }
