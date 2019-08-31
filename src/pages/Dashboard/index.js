@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
+import { withNavigationFocus } from 'react-navigation';
 import { format, parseISO, addDays, subDays } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -28,7 +29,7 @@ import {
   SubscribeButton,
 } from './styles';
 
-export default function Dashboard() {
+function Dashboard({ isFocused }) {
   const [meetups, setMeetups] = useState([]);
   const [date, setDate] = useState(new Date());
   const [page, setPage] = useState(1);
@@ -60,6 +61,16 @@ export default function Dashboard() {
 
     loadMeetups();
   }, [date, page]); // eslint-disable-line
+
+  useEffect(() => {
+    if (isFocused) {
+      if (page !== 1) {
+        setMeetups([]);
+      }
+
+      setPage(1);
+    }
+  }, [isFocused]); // eslint-disable-line
 
   function prevDate() {
     setDate(subDays(date, 1));
@@ -167,3 +178,5 @@ Dashboard.navigationOptions = {
     <Icon name="dashboard" size={20} color={tintColor} />
   ),
 };
+
+export default withNavigationFocus(Dashboard);

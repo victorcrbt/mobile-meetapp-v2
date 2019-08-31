@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { withNavigationFocus } from 'react-navigation';
 import { Alert } from 'react-native';
-import { format, parseISO, addDays, subDays } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -13,10 +14,6 @@ import Button from '~/components/Button';
 import {
   Container,
   Meetups,
-  DatePicker,
-  PrevDate,
-  CurrentDate,
-  NextDate,
   Meetup,
   Banner,
   Info,
@@ -28,22 +25,28 @@ import {
   SubscribeButton,
 } from './styles';
 
-export default function Dashboard() {
+function Subscriptions({ isFocused }) {
   const [subscriptions, setSubscriptions] = useState([]);
 
-  useEffect(() => {
-    async function loadSubscriptions() {
-      try {
-        const response = await api.get('/subscriptions');
+  async function loadSubscriptions() {
+    try {
+      const response = await api.get('/subscriptions');
 
-        setSubscriptions(response.data);
-      } catch (err) {
-        Alert.alert('Erro', 'Falha ao carregar os dados.');
-      }
+      setSubscriptions(response.data);
+    } catch (err) {
+      Alert.alert('Erro', 'Falha ao carregar os dados.');
     }
+  }
 
+  useEffect(() => {
     loadSubscriptions();
   }, []);
+
+  useEffect(() => {
+    if (isFocused) {
+      loadSubscriptions();
+    }
+  }, [isFocused]); // eslint-disable-line
 
   async function handleSubscription(id) {
     try {
@@ -114,9 +117,11 @@ export default function Dashboard() {
   );
 }
 
-Dashboard.navigationOptions = {
+Subscriptions.navigationOptions = {
   title: 'Inscrições',
   tabBarIcon: ({ tintColor }) => (
     <Icon name="assignment" size={20} color={tintColor} />
   ),
 };
+
+export default withNavigationFocus(Subscriptions);
