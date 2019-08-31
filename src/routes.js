@@ -18,11 +18,22 @@ export default (isSigned = false) =>
           SignIn,
           SignUp,
         }),
-        App: createBottomTabNavigator({
-          Dashboard,
-          Subscriptions,
-          Profile,
-        }),
+        App: createBottomTabNavigator(
+          {
+            Dashboard,
+            Subscriptions,
+            Profile,
+          },
+          {
+            tabBarOptions: {
+              activeTintColor: '#fff',
+              inactiveTintColor: 'rgba(255, 255, 255, 0.3)',
+              style: {
+                backgroundColor: '#402845',
+              },
+            },
+          }
+        ),
       },
       {
         initialRouteName: isSigned ? 'App' : 'Auth',
