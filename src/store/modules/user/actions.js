@@ -1,7 +1,7 @@
-export function updateProfileRequest(data) {
+export function updateProfileRequest(data, functions) {
   return {
     type: '@user/UPDATE_PROFILE_REQUEST',
-    payload: { data },
+    payload: { data, functions },
   };
 }
 
