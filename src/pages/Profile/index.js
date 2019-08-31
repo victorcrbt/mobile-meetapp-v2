@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -6,6 +7,7 @@ import { signOut } from '~/store/modules/auth/actions';
 import { updateProfileRequest } from '~/store/modules/user/actions';
 
 import Background from '~/components/Background';
+import Header from '~/components/Header';
 import Input from '~/components/Input';
 
 import {
@@ -15,6 +17,8 @@ import {
   SubmitButton,
   LogoutButton,
 } from './styles';
+
+import validationSchema from '~/validators/userUpdate';
 
 export default function Profile() {
   const dispatch = useDispatch();
@@ -31,7 +35,7 @@ export default function Profile() {
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const data = {
       name,
       email,
@@ -40,17 +44,25 @@ export default function Profile() {
       confirmPassword,
     };
 
-    dispatch(
-      updateProfileRequest(data, {
-        setOldPassword,
-        setPassword,
-        setConfirmPassword,
-      })
-    );
+    try {
+      await validationSchema.validate(data, { abortEarly: false });
+
+      dispatch(
+        updateProfileRequest(data, {
+          setOldPassword,
+          setPassword,
+          setConfirmPassword,
+        })
+      );
+    } catch (err) {
+      Alert.alert('Falha na validação', err.inner[0].message);
+    }
   }
 
   return (
     <Background>
+      <Header />
+
       <Container>
         <Form>
           <Input
