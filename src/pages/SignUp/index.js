@@ -34,10 +34,6 @@ export default function SignUp({ navigation }) {
 
     return dispatch(
       signUpRequest(name, email, password, {
-        setName,
-        setEmail,
-        setPassword,
-        setConfirmPassword,
         navigation,
       })
     );

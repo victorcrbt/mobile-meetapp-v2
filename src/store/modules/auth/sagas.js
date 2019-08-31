@@ -17,9 +17,6 @@ export function* signIn({ payload }) {
     api.defaults.headers.Authorization = `Bearer ${token}`;
 
     yield put(signInSuccess(token, user));
-
-    setEmail('');
-    setPassword('');
   } catch (err) {
     Alert.alert(
       'Falha ao realizar login',
@@ -33,23 +30,13 @@ export function* signIn({ payload }) {
 
 export function* signUp({ payload }) {
   const { name, email, password } = payload;
-  const {
-    setName,
-    setEmail,
-    setPassword,
-    setConfirmPassword,
-    navigation,
-  } = payload.functions;
+  const { navigation } = payload.functions;
 
   try {
     yield call(api.post, '/users', { name, email, password });
 
     Alert.alert('Sucesso!', 'Usuário cadastrado com sucesso!');
 
-    setName('');
-    setEmail('');
-    setPassword('');
-    setConfirmPassword('');
     navigation.navigate('SignIn');
   } catch (err) {
     Alert.alert(
