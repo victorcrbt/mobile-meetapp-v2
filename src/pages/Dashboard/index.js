@@ -52,8 +52,6 @@ export default function Dashboard() {
           ),
         }));
 
-        console.tron.log(meetupList);
-
         setMeetups([...meetups, ...meetupList]);
       } catch (err) {
         Alert.alert('Erro', 'Falha ao carregar os dados.');
