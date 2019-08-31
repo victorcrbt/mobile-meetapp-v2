@@ -1,20 +1,14 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
+import { useSelector } from 'react-redux';
 
-import './config/ReactotronConfig';
-
-import Routes from './routes';
-import { store, persistor } from './store';
+import createRouter from './routes';
 
 const App = () => {
-  return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        <Routes />
-      </PersistGate>
-    </Provider>
-  );
+  const signed = useSelector(state => state.auth.signed);
+
+  const Routes = createRouter(signed);
+
+  return <Routes />;
 };
 
 export default App;

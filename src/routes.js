@@ -1,13 +1,31 @@
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import {
+  createAppContainer,
+  createSwitchNavigator,
+  createBottomTabNavigator,
+} from 'react-navigation';
 
 import SignIn from '~/pages/SignIn';
 import SignUp from '~/pages/SignUp';
+import Dashboard from '~/pages/Dashboard';
+import Subscriptions from '~/pages/Subscriptions';
+import Profile from '~/pages/Profile';
 
-const Routes = createAppContainer(
-  createSwitchNavigator({
-    SignIn,
-    SignUp,
-  })
-);
-
-export default Routes;
+export default (isSigned = false) =>
+  createAppContainer(
+    createSwitchNavigator(
+      {
+        Auth: createSwitchNavigator({
+          SignIn,
+          SignUp,
+        }),
+        App: createBottomTabNavigator({
+          Dashboard,
+          Subscriptions,
+          Profile,
+        }),
+      },
+      {
+        initialRouteName: isSigned ? 'App' : 'Auth',
+      }
+    )
+  );
