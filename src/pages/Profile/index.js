@@ -6,6 +6,7 @@ import { signOut } from '~/store/modules/auth/actions';
 import { updateProfileRequest } from '~/store/modules/user/actions';
 
 import Background from '~/components/Background';
+import Header from '~/components/Header';
 import Input from '~/components/Input';
 
 import {
@@ -51,6 +52,8 @@ export default function Profile() {
 
   return (
     <Background>
+      <Header />
+
       <Container>
         <Form>
           <Input
